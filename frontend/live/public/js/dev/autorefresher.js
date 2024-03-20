@@ -1,1 +1,0 @@
-(()=>{var o=new WebSocket("ws://127.0.0.1:8080/ws");o.onmessage=function(e){e.data==="fileChanged"?(console.log("File changed, refreshing the browser."),setTimeout(()=>{window.location.reload(!0)},150)):document.body.innerHTML=e.data};o.onerror=function(e){console.log("WebSocket Error: "+e)};})();

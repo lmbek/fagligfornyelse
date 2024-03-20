@@ -1,5 +1,3 @@
-// autorefresher.js
-
 const socket = new WebSocket('ws://127.0.0.1:8080/ws');
 
 socket.onmessage = function(event) {
@@ -18,3 +16,6 @@ socket.onmessage = function(event) {
 socket.onerror = function(error) {
 	console.log('WebSocket Error: ' + error);
 };
+
+export default socket;
+
