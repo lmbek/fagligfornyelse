@@ -1,10 +1,11 @@
-package ssg
+package autoreloader
 
 import (
-	"backend/builder"
 	"log"
 	"os"
 	"path/filepath"
+	"project/ssg"
+	"project/ssg/production"
 	"sync"
 	"time"
 
@@ -20,12 +21,17 @@ var (
 	isBuilding   = false             // flag to prevent checking for file changes when building
 	buildEndTime time.Time           // time at the end of the build, used for comparison
 
-	JsPath              = "frontend/dev/js"
-	gohtmlPath          = "frontend/dev/pages"
-	requiredDirectories = []string{JsPath, gohtmlPath}
+	devPath                          = "frontend/src"
+	requiredDirectoriesForFileChange = []string{devPath}
+	requiredDirectoriesForSSGBuild   = []string{"frontend/src/gohtml"}
+	SSGPageBuilder                   *ssg.PageBuilder
 )
 
 func Run() error {
+	if production.Enabled {
+		log.Println("Warning: autoreloader is disabled in production")
+		return nil
+	}
 	http.Handle("/ws", websocket.Handler(handleConnections))
 
 	go handleMessages()
@@ -62,12 +68,13 @@ func handleMessages() {
 }
 
 func checkFileChanges() {
-	var lastModTime time.Time
-	paths := requiredDirectories
+	var lastModTimeForFileChange time.Time // for files under directories in requiredDirectoriesForFileChange
+	var lastModTimeForSSGBuild time.Time   // for files under directories in requiredDirectoriesForSSGBuild
+	pathsForFileChange := requiredDirectoriesForFileChange
+	pathsForSSGBuild := requiredDirectoriesForSSGBuild
 
 	for {
-		//loopTime := time.Now()             // record the start of this check
-		time.Sleep(100 * time.Millisecond) // the sleep can be adjusted according to your requirement
+		time.Sleep(100 * time.Millisecond)
 
 		builderMutex.Lock()
 		if isBuilding {
@@ -75,31 +82,44 @@ func checkFileChanges() {
 			continue
 		}
 
-		modTime, err := getLastModifiedTimestamp(paths)
+		modTime, err := getLastModifiedTimestamp(pathsForFileChange)
 		if err != nil {
-			log.Println("Error checking file modification time:", err)
+			log.Println("Error checking file modification time for file change:", err)
 			broadcast <- "Error: " + err.Error()
 			builderMutex.Unlock()
 			continue
 		}
 
-		if modTime.After(lastModTime) {
-			// only trigger if the modification time is after the last builder end time
+		if modTime.After(lastModTimeForFileChange) {
+			log.Println("Triggering Full Reload for file change")
+			broadcast <- "fileChanged"
+			lastModTimeForFileChange = modTime
+		}
+
+		modTime, err = getLastModifiedTimestamp(pathsForSSGBuild)
+		if err != nil {
+			log.Println("Error checking file modification time for SSG build:", err)
+			broadcast <- "Error: " + err.Error()
+			builderMutex.Unlock()
+			continue
+		}
+
+		if modTime.After(lastModTimeForSSGBuild) {
 			isBuilding = true
 			builderMutex.Unlock()
 
-			err := builder.Build()
-			isBuilding = false
-			buildEndTime = time.Now()
-
-			if err != nil {
-				log.Println(err)
+			if SSGPageBuilder != nil {
+				err := SSGPageBuilder.Build()
+				if err != nil {
+					log.Println(err)
+				}
+				isBuilding = false
+				buildEndTime = time.Now()
 			}
 
-			log.Println("Triggering Full Reload")
-			// broadcast file changed, we need page reload
+			log.Println("Triggering Full Reload After SSG Build")
 			broadcast <- "fileChanged"
-			lastModTime = modTime
+			lastModTimeForSSGBuild = modTime
 		} else {
 			builderMutex.Unlock()
 		}
