@@ -1,0 +1,7 @@
+{
+	"layoutsPath": "frontend/src/gohtml/layouts",
+	"pagesPath": "frontend/src/gohtml/pages",
+	"componentsPath": "frontend/src/gohtml/components",
+	"outLivePath": "out/Debug/frontend/public",
+	"outReleasePath": "out/Release/frontend/public"
+}

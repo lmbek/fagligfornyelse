@@ -1,0 +1,14 @@
+{
+	"development": {
+		"host": "localhost:8080",
+		"webPath": "out/Debug/frontend/public"
+	},
+	"production": {
+		"host": "lmbek.dk:9340",
+		"webPath": "out/Release/frontend/public",
+		"tls": {
+			"certPath": "",
+			"keyPath": ""
+		}
+	}
+}
