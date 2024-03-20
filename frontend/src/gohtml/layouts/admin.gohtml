@@ -1,0 +1,45 @@
+{{/* Layout structure start */}}
+{{define "layouts/admin" }}
+<!doctype html>
+<html lang="{{template "pages/language"}}">
+<head>
+    <title>{{template "pages/title"}}</title>
+    {{template "pages/favicon"}}
+    <script defer src="/js/admin.bundle.min.js"></script>
+    <link href="/css/main.min.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+    <noscript>Javascript not enabled</noscript>
+    <h1>Admin page</h1>
+    {{template "components/navbar"}}
+    <!-- Admin page -->
+    <div id="application"></div>
+</body>
+</html>
+{{end}}
+{{/* Layout structure end */}}
+
+{{/* (overwritable by page) */}}
+{{/* Layout definitions start */}}
+
+{{define "pages/language"}}
+    en
+{{end}}
+
+{{define "pages/favicon"}}
+    <link rel="icon" type="image/x-icon" href="data:,">
+{{end}}
+
+{{/* Layout definitions end */}}
+
+{{/* (copy paste below for this layout) */}}
+{{/* Page definitions */}}
+
+{{define "pages/title"}}
+
+{{end}}
+
+{{define "pages/content" }}
+
+{{end}}
+
