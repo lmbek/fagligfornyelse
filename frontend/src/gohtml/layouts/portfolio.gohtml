@@ -1,0 +1,65 @@
+{{ define "layouts/portfolio" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.MetaTitle}}</title>
+    <link rel="icon" href="data:,">
+    <!-- For non-production we use tailwind as CDN instead of through NPM -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="globals.css" rel="stylesheet" type="text/css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen grid" style="grid-template-rows: auto 1fr auto">
+<header class="px-6 py-6 bg-green-700 flex justify-between items-center">
+    <div class="flex items-center">
+        <img src="{{.Logo.Src}}" alt="{{.Logo.Alt}}" style="height: 150px;">
+        <h1 class="font-bold text-2xl ml-4">{{.Title}}</h1>
+    </div>
+    <nav>
+        <a href="/" class="text-white hover:text-green-300 mr-4" onclick="event.preventDefault(); pageChanger.changeTo('/');">Projects</a>
+        <a href="/about" class="text-white hover:text-green-300 mr-4" onclick="event.preventDefault(); pageChanger.changeTo('/about');">About</a>
+    </nav>
+</header>
+<main class="px-6 py-8 bg-gray-800">
+    <!-- Hero section -->
+    <div id="hero" class="bg-green-600 bg-cover bg-center text-white text-center" style="aspect-ratio: 4/1; background-size: contain; background-repeat: no-repeat; background-image: url('/images/hero.jpg');"></div>
+    <br>
+    <!-- Project Cards Section -->
+    <h2 class="text-4xl py-2 font-bold mb-2">{{.ProjectsHeadline}}</h2>
+    <div class="mt-12 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {{range .Projects}}
+            <div class="grid grid-rows-[auto,1fr,auto] p-4 rounded shadow-lg bg-gray-700 hover:bg-gray-600 transition-colors duration-200">
+                <h2 class="text-2xl font-bold mb-2">{{.Title}}</h2>
+                <p class="mb-4 flex-grow">{{.Description}}</p>
+
+                <p>Technologies: {{range .Technologies}}{{.}}, {{end}}</p>
+
+                <div style="grid-template-columns: auto auto 1fr;" class="grid gap-4 items-center justify-items-start">
+                    <button style="justify-self: start; white-space: nowrap;" class="col-span-1 bg-green-600 text-white px-5 py-3 rounded shadow hover:bg-green-500 transition-colors duration-200"
+                            hx-get="{{.Image.Src}}.html"
+                            hx-swap="outerHTML"
+                            hx-target="#hero"
+                    >See image</button>
+                    <a target="_blank" href="{{.Link}}" style="justify-self: start" class="col-span-1 bg-green-600 text-white px-5 py-3 rounded shadow hover:bg-green-500 transition-colors duration-200">Link</a>
+                    <img src="{{.Image.Src}}" alt="{{.Image.Alt}}" style="justify-self: end" class="col-span-1 w-16 h-16 object-cover self-end">
+                </div>
+            </div>
+        {{end}}
+    </div>
+</main>
+<footer class="px-6 py-4 bg-green-700 flex justify-between items-center">
+    <p class="text-white">{{.CopyrightText}}</p>
+    <div class="flex items-center">
+        <a href="https://www.linkedin.com/in/lmbek/" target="_blank">
+            <img style="background: white; padding: 10px; margin: 10px; width: 60px; height: 60px; object-fit: contain" src="/images/linkedin.png" alt="LinkedIn Logo" style="height: 30px;">
+        </a>
+        <a href="https://github.com/lmbek"  target="_blank">
+            <img style="background: white; padding: 10px; margin: 10px; width: 60px; height: 60px; object-fit: contain" src="/images/github.svg" alt="GitHub Logo" style="height: 30px;">
+        </a>
+    </div>
+</footer>
+</body>
+</html>
+{{end}}
