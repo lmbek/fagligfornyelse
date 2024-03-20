@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "npm run development",
-    "development": "concurrently \"nodemon --exec \\\"node esbuild\\\" --watch ./frontend/dev/js --ext .js,.jsx\" \"go run -tags development .\"",
+    "development": "concurrently \"nodemon --exec \\\"node esbuild\\\" --watch ./frontend/src --ext .css,.js,.jsx\" \"go run -tags development .\"",
     "production": "node esbuild && go build -tags production .",
     "go": "go run .",
     "test": "echo \"Error: no test specified\" && exit 1"
