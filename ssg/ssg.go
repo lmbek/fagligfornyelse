@@ -36,6 +36,36 @@ func (pageBuilder *PageBuilder) Build() error {
 		return nil
 	}
 
+	err := pageBuilder.generateCSS()
+	if err != nil {
+		return err
+	}
+
+	err = pageBuilder.generateJS()
+	if err != nil {
+		return err
+	}
+
+	err = pageBuilder.generateHTML()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pageBuilder *PageBuilder) generateJS() error {
+	// we should copy (map) all javascript files from /frontend/out/js to out/Debug/frontend/public/js
+
+	return nil
+}
+
+func (pageBuilder *PageBuilder) generateCSS() error {
+	return nil
+}
+
+func (pageBuilder *PageBuilder) generateHTML() error {
+
 	// read all pages inside directory pages (look for all subdirectories also)
 	files, err := pageBuilder.getFilesFromDirPath(pageBuilder.Config.PagesPath)
 	if err != nil {
@@ -46,14 +76,14 @@ func (pageBuilder *PageBuilder) Build() error {
 	if production.Enabled {
 		// create an empty files at the destination (from files variable) (production/release) by using go build tag
 		fmt.Println("Generating production build (Release directory)")
-		err := pageBuilder.generateFiles(pageBuilder.Config.OutReleasePath, files)
+		err := pageBuilder.generateHTMLFiles(pageBuilder.Config.OutReleasePath, files)
 		if err != nil {
 			return err
 		}
 	} else {
 		// create an empty files at the destination (from files variable) (development/live) by using go build tag
 		fmt.Println("Generating dev build (Debug directory)")
-		err := pageBuilder.generateFiles(pageBuilder.Config.OutLivePath, files)
+		err := pageBuilder.generateHTMLFiles(pageBuilder.Config.OutLivePath, files)
 		if err != nil {
 			return err
 		}
@@ -62,7 +92,7 @@ func (pageBuilder *PageBuilder) Build() error {
 	return nil
 }
 
-func (pageBuilder *PageBuilder) generateFiles(deployPath string, files []File) error {
+func (pageBuilder *PageBuilder) generateHTMLFiles(deployPath string, files []File) error {
 	// Read the layout and component files.
 	layoutFiles, err := pageBuilder.getFilesFromDirPath(pageBuilder.Config.LayoutsPath)
 	if err != nil {
