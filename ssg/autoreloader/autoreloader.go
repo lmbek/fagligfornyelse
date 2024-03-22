@@ -22,10 +22,11 @@ var (
 	buildEndTime time.Time           // time at the end of the build, used for comparison
 
 	// TODO: move this hardcoded path into the config (also look into making the config a singleton)
-	devPath                          = "frontend/src"
+	//devPath = "frontend/out"
+	devPath                          = "out/Debug/frontend/public"
 	requiredDirectoriesForFileChange = []string{devPath}
 	// TODO: move this hardcoded path into the config (also look into making the config a singleton)
-	requiredDirectoriesForSSGBuild = []string{"frontend/src/gohtml"}
+	requiredDirectoriesForSSGBuild = []string{"frontend/src/gohtml", "frontend/src/css", "frontend/src/js"}
 	SSGPageBuilder                 *ssg.PageBuilder
 )
 

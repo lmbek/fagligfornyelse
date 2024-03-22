@@ -66,7 +66,7 @@ func (pageBuilder *PageBuilder) generateCSSFiles(deployPath string, files []File
 	src := pageBuilder.Config.CSSPath
 	out := deployPath
 
-	err := helper.CopyDir(out, src)
+	err := helper.CopyFS(out, os.DirFS(src))
 	if err != nil {
 		return err
 	}
