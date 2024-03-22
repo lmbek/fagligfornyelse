@@ -1,4 +1,4 @@
-{{ define "layouts/admin" }}
+{{ define "layouts/default2" }}
     <!doctype html>
     <html lang="{{template "pages/language"}}">
     <head>
@@ -7,13 +7,12 @@
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
         <link href="/css/main.min.css" rel="stylesheet" type="text/css"/>
         <script src="/js/main.bundle.min.js"></script>
-        <script defer src="/js/admin.bundle.min.js"></script>
         <style>
 			body {
 				background-color: #FAFAFA;
-				display: grid;
-				grid-template-rows: auto auto 1fr auto;
-				min-height: 100vh;
+                display: grid;
+                grid-template-rows: auto auto 1fr auto;
+                min-height: 100vh;
 			}
         </style>
     </head>
