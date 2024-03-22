@@ -10,6 +10,10 @@ type SSGData struct {
 	FilePath       string
 	PagesPath      string `json:"pagesPath"`
 	LayoutsPath    string `json:"layoutsPath"`
+	CSSPath        string `json:"cssPath"`
+	JSPath         string `json:"jsPath"`
+	CSSOutPath     string `json:"cssOutPath"`
+	JSOutPath      string `json:"jsOutPath"`
 	ComponentsPath string `json:"componentsPath"`
 	OutLivePath    string `json:"outLivePath"`
 	OutReleasePath string `json:"outReleasePath"`

@@ -2,6 +2,10 @@
 	"layoutsPath": "frontend/src/gohtml/layouts",
 	"pagesPath": "frontend/src/gohtml/pages",
 	"componentsPath": "frontend/src/gohtml/components",
+	"cssPath": "frontend/src/css/",
+	"jsPath": "frontend/src/js/",
+	"cssOutPath": "frontend/out/css/",
+	"jsOutPath": "frontend/out/js/",
 	"outLivePath": "out/Debug/frontend/public",
 	"outReleasePath": "out/Release/frontend/public"
 }

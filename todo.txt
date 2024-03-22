@@ -1,0 +1,7 @@
+Følgende skal laves:
+
+1) Go SSG skal kopier frontend/src/css og frontend/src/js til frontend/out/css og frontend/out/js
+    * html skal minifies med custom-minifier (egen github repos)
+2) esbuild.js skal tage css og js og compile det over til frontend/out mappen.
+3) config filerne, ssg, autorefresher, package.json og esbuild.js skal pege på det nye sted
+4) SSR variables med defines for at overwrite blocks i component, layout og pages

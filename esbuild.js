@@ -2,10 +2,10 @@ const esbuild = require("esbuild");
 
 // main.min.css
 esbuild.build({
-	entryPoints: ['./frontend/src/css/main.css'],
+	entryPoints: ['./frontend/out/css/main.css'],
 	sourcemap: false,
 	bundle: true,
-	outfile: './frontend/out/css/main.min.css', // Corrected file extension
+	outfile: './out/Debug/frontend/public/css/main.min.css', // Corrected file extension
 	minify: true,
 	target: 'es2020', // This is fine if you're targeting specific CSS features
 }).then(() => {
@@ -16,10 +16,10 @@ esbuild.build({
 
 // main.bundle.min.js
 esbuild.build({
-	entryPoints: ['./frontend/src/js/main.js'],
+	entryPoints: ['./frontend/out/js/main.js'],
 	sourcemap: false,
 	bundle: true,
-	outfile: './frontend/out/js/main.bundle.min.js',
+	outfile: './out/Debug/frontend/public/js/main.bundle.min.js',
 	target: 'es2020', /* es2016 */
 	minify: true,
 	platform: 'browser',
@@ -31,10 +31,10 @@ esbuild.build({
 
 // admin.bundle.min.js
 esbuild.build({
-	entryPoints: ['./frontend/src/js/admin/app.jsx'],
+	entryPoints: ['./frontend/out/js/admin/app.jsx'],
 	sourcemap: false,
 	bundle: true,
-	outfile: './frontend/out/js/admin.bundle.min.js',
+	outfile: './out/Debug/frontend/public/js/admin.bundle.min.js',
 	target: 'es2020',
 	jsxFactory: 'React.createElement',
 	jsxFragment: 'React.Fragment',

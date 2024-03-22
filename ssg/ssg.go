@@ -1,19 +1,22 @@
 package ssg
 
+// not used anymore:
+//"github.com/tdewolff/minify/v2"
+//"github.com/tdewolff/minify/v2/html"
+//"github.com/tdewolff/minify/v2/js"
+
 import (
 	"bytes"
 	"fmt"
-	"github.com/tdewolff/minify/v2"
-	"github.com/tdewolff/minify/v2/html"
-	"github.com/tdewolff/minify/v2/js"
 	"html/template"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"project/ssg/config"
+	"project/ssg/custom_minifier/htmlmin"
+	"project/ssg/helper"
 	"project/ssg/production"
-	"regexp"
 	"strings"
 )
 
@@ -30,14 +33,69 @@ type File struct {
 	path string
 }
 
+func (pageBuilder *PageBuilder) generateJSFiles(deployPath string, files []File) error {
+	// we should copy (map) all javascript files from /frontend/out/js to out/Debug/frontend/public/js
+
+	// in go 1.23 we can do this:
+	// err = os.CopyFS(destDir, os.DirFS(srcDir))
+
+	fmt.Println("generating js")
+	// but until then, we do:
+	src := pageBuilder.Config.JSPath
+	out := deployPath
+
+	err := helper.CopyDir(out, src)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pageBuilder *PageBuilder) generateCSSFiles(deployPath string, files []File) error {
+	// in go 1.23 we can do this:
+	// err = os.CopyFS(destDir, os.DirFS(srcDir))
+
+	// we should copy (map) all javascript files from /frontend/out/js to out/Debug/frontend/public/js
+
+	// in go 1.23 we can do this:
+	// err = os.CopyFS(destDir, os.DirFS(srcDir))
+
+	fmt.Println("generating css")
+	// but until then, we do:
+	src := pageBuilder.Config.CSSPath
+	out := deployPath
+
+	err := helper.CopyDir(out, src)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (pageBuilder *PageBuilder) Build() error {
 	if production.Enabled {
 		log.Println("Warning: Page builder is disabled in production")
 		return nil
 	}
 
-	// read all pages inside directory pages (look for all subdirectories also)
-	files, err := pageBuilder.getFilesFromDirPath(pageBuilder.Config.PagesPath)
+	// read all css files inside directory pages (look for all subdirectories also)
+	//cssFiles, err := pageBuilder.getFilesFromDirPath(pageBuilder.Config.CSSPath)
+	//if err != nil {
+	//	return err
+	//}
+
+	// read all js files inside directory pages (look for all subdirectories also)
+	//jsFiles, err := pageBuilder.getFilesFromDirPath(pageBuilder.Config.JSPath)
+	//if err != nil {
+	//	return err
+	//}
+
+	// as we only copy files, and dont do anything with them at the moment with Go, we dont need to loop the files
+	var cssFiles, jsFiles []File
+
+	// read all html files inside directory pages (look for all subdirectories also)
+	htmlFiles, err := pageBuilder.getFilesFromDirPath(pageBuilder.Config.PagesPath)
 	if err != nil {
 		return err
 	}
@@ -46,23 +104,43 @@ func (pageBuilder *PageBuilder) Build() error {
 	if production.Enabled {
 		// create an empty files at the destination (from files variable) (production/release) by using go build tag
 		fmt.Println("Generating production build (Release directory)")
-		err := pageBuilder.generateFiles(pageBuilder.Config.OutReleasePath, files)
+		err = pageBuilder.generateCSSFiles(pageBuilder.Config.CSSOutPath, cssFiles)
 		if err != nil {
 			return err
 		}
+
+		err = pageBuilder.generateJSFiles(pageBuilder.Config.JSOutPath, jsFiles)
+		if err != nil {
+			return err
+		}
+		return pageBuilder.generateHTMLFiles(pageBuilder.Config.OutReleasePath, htmlFiles)
 	} else {
 		// create an empty files at the destination (from files variable) (development/live) by using go build tag
 		fmt.Println("Generating dev build (Debug directory)")
-		err := pageBuilder.generateFiles(pageBuilder.Config.OutLivePath, files)
+		err = pageBuilder.generateCSSFiles(pageBuilder.Config.CSSOutPath, cssFiles)
 		if err != nil {
 			return err
 		}
-	}
 
-	return nil
+		err = pageBuilder.generateJSFiles(pageBuilder.Config.JSOutPath, jsFiles)
+		if err != nil {
+			return err
+		}
+
+		return pageBuilder.generateHTMLFiles(pageBuilder.Config.OutLivePath, htmlFiles)
+	}
 }
 
-func (pageBuilder *PageBuilder) generateFiles(deployPath string, files []File) error {
+func minifyHTML(html string) ([]byte, error) {
+	return htmlmin.Minify([]byte(html), &htmlmin.Options{
+		MinifyScripts: false,
+		MinifyStyles:  false,
+		UnquoteAttrs:  false,
+	})
+}
+
+func (pageBuilder *PageBuilder) generateHTMLFiles(deployPath string, files []File) error {
+
 	// Read the layout and component files.
 	layoutFiles, err := pageBuilder.getFilesFromDirPath(pageBuilder.Config.LayoutsPath)
 	if err != nil {
@@ -113,25 +191,34 @@ func (pageBuilder *PageBuilder) generateFiles(deployPath string, files []File) e
 
 		var result string
 
-		// minify the html
-		m := minify.New()
+		//fmt.Println(result)
 
-		// Set up the desired HTML minifier parameters
-		mHtml := &html.Minifier{
-			KeepDefaultAttrVals: true,
-			KeepWhitespace:      true,
-			KeepDocumentTags:    true,
-		}
+		html, err := minifyHTML(buffer.String())
+		//if err != nil {
+		//	return err
+		//}
+		/*
+				// minify the html
+				m := minify.New()
 
-		m.AddFunc("text/html", mHtml.Minify) // use method as func
-		m.AddFuncRegexp(regexp.MustCompile("^(application|text)/(x-)?(java|ecma)script$"), js.Minify)
+				// Set up the desired HTML minifier parameters
+				mHtml := &html.Minifier{
+					KeepDefaultAttrVals: true,
+					KeepWhitespace:      true,
+					KeepDocumentTags:    true,
+				}
 
-		result, err = m.String("text/html", string(buffer.Bytes()))
-		if err != nil {
-			fmt.Println(err)
-		}
+				m.AddFunc("text/html", mHtml.Minify) // use method as func
+				m.AddFuncRegexp(regexp.MustCompile("^(application|text)/(x-)?(java|ecma)script$"), js.Minify)
 
-		result = strings.ReplaceAll(result, "\n", "")
+			result, err = m.String("text/html", string(buffer.Bytes()))
+			if err != nil {
+				fmt.Println(err)
+			}
+		*/
+		result = strings.ReplaceAll(string(html), "\n", "")
+
+		//fmt.Println(result)
 
 		// generate the file path (will be the result index.html from index.gohtml - or *.html from *.gohtml)
 		file.path = strings.TrimPrefix(file.path, pageBuilder.Config.PagesPath)

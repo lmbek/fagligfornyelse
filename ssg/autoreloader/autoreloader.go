@@ -21,10 +21,12 @@ var (
 	isBuilding   = false             // flag to prevent checking for file changes when building
 	buildEndTime time.Time           // time at the end of the build, used for comparison
 
+	// TODO: move this hardcoded path into the config (also look into making the config a singleton)
 	devPath                          = "frontend/src"
 	requiredDirectoriesForFileChange = []string{devPath}
-	requiredDirectoriesForSSGBuild   = []string{"frontend/src/gohtml"}
-	SSGPageBuilder                   *ssg.PageBuilder
+	// TODO: move this hardcoded path into the config (also look into making the config a singleton)
+	requiredDirectoriesForSSGBuild = []string{"frontend/src/gohtml"}
+	SSGPageBuilder                 *ssg.PageBuilder
 )
 
 func Run() error {
