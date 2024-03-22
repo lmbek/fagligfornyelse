@@ -1,0 +1,45 @@
+{{/* Layout structure start */}}
+{{define "layouts/default" }}
+<!doctype html>
+<html lang="{{template "pages/language"}}">
+<head>
+    <title>{{template "pages/title"}}</title>
+    {{template "pages/favicon"}}
+    <script src="/js/main.bundle.min.js"></script>
+    <link href="/css/main.min.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+    <noscript>Javascript not enabled</noscript>
+    layout default
+{{template "components/navbar"}}
+{{template "pages/content" }}
+{{template "components/default-footer"}}
+</body>
+</html>
+{{end}}
+{{/* Layout structure end */}}
+
+{{/* (overwritable by page) */}}
+{{/* Layout definitions start */}}
+
+{{define "pages/language"}}
+    en
+{{end}}
+
+{{define "pages/favicon"}}
+    <link rel="icon" type="image/x-icon" href="data:,">
+{{end}}
+
+{{/* Layout definitions end */}}
+
+{{/* (copy paste below for this layout) */}}
+{{/* Page definitions */}}
+
+{{define "pages/title"}}
+
+{{end}}
+
+{{define "pages/content" }}
+
+{{end}}
+
